@@ -5,14 +5,15 @@
 // Eric Alexander
 
 // First, we will create some constants to define non-data-related parts of the visualization
-w = 700;			// Width of our visualization
-h = 500;			// Height of our visualization
-xOffset = 40;		// Space for x-axis labels
-yOffset = 100;		// Space for y-axis labels
-margin = 10;		// Margin around visualization
+w = 2000;			// Width of our visualization
+h = 2000;			// Height of our visualization
+//xOffset = 40;		// Space for x-axis labels
+//yOffset = 100;		// Space for y-axis labels
+margin = 0;		// Margin around visualization
 vals = ['Rank','Frequency','TFIDF','DocFrequency'];
 xVal = vals[0];		// Value to plot on x-axis
 yVal = vals[1];		// Value to plot on y-axis
+gridLength = 200;
 
 // Next, we will load in our CSV of data
 d3.csv('shakespeare_top100.csv', function(csvData) {
@@ -23,11 +24,13 @@ d3.csv('shakespeare_top100.csv', function(csvData) {
 	xScale = d3.scale.linear()
 				.domain([d3.min(data, function(d) { return parseFloat(d[xVal]); })-1,
 						 d3.max(data, function(d) { return parseFloat(d[xVal]); })+1])
-				.range([yOffset + margin, w - margin]);
+				//.range([yOffset + margin, w - margin]);
+				.range([0, gridLength]);
 	yScale = d3.scale.linear()
 				.domain([d3.min(data, function(d) { return parseFloat(d[yVal]); })-1,
 						 d3.max(data, function(d) { return parseFloat(d[yVal]); })+1])
-				.range([h - xOffset - margin, margin]); // Notice this is backwards!
+				//.range([h - xOffset - margin, margin]); // Notice this is backwards!
+				.range([gridLength, 0]); // Notice this is backwards!
 
 	// Next, we will create an SVG element to contain our visualization.
 	svg = d3.select('#pointsSVG').append('svg:svg')
@@ -41,30 +44,32 @@ d3.csv('shakespeare_top100.csv', function(csvData) {
 				.ticks(5);
 	xAxisG = svg.append('g')
 				.attr('class', 'axis')
-				.attr('transform', 'translate(0,' + (h - xOffset) + ')')
+				.attr('transform', 'translate(' + 0 + ',' + gridLength + ')')
 				.call(xAxis);
+				/*
 	xLabel = svg.append('text')
 				.attr('class','label')
-				.attr('x', w/2)
-				.attr('y', h - 5)
-				.text(xVal);
+				.attr('x', gridLength/2)
+				.attr('y', gridLength - 20)
+				.text(xVal);*/
 	      // Uncomment the following event handler to change xVal by clicking label (and remove above semi-colon)
 				//.on('click', function() {
 				//	setXval(getNextVal(xVal));
 				//});
 	yAxis = d3.svg.axis()
 				.scale(yScale)
-				.orient('left')
+				.orient('right')
 				.ticks(5);
 	yAxisG = svg.append('g')
 				.attr('class', 'axis')
-				.attr('transform', 'translate(' + yOffset + ',0)')
+				.attr('transform', 'translate(' + 0 + ',' + 0 + ')')
 				.call(yAxis);
+				/*
 	yLabel = svg.append('text')
 				.attr('class','label')
-				.attr('x', yOffset/2)
-				.attr('y', h/2-10)
-				.text(yVal);
+				.attr('x', 0)
+				.attr('y', gridLength/2)
+				.text(yVal);*/
 				// Uncomment the following event handler to change yVal by clicking label (and remove above semi-colon)
 				//.on('click', function() {
 				//	setYval(getNextVal(yVal));
@@ -90,8 +95,8 @@ d3.csv('shakespeare_top100.csv', function(csvData) {
 			.append('svg:circle')
 			.attr('cx', function(d) {return xScale(d[xVal]); })
 			.attr('cy', function(d) {return yScale(d[yVal]); })
-			.attr('r', 5)
-			.style('fill', 'steelblue')
+			.attr('r', 3)
+			.style('fill', 'lightgrey')
 			.append('svg:title')
 			.text(function(d) {return d['Rank']; });
 			// tooltip?
@@ -145,3 +150,6 @@ function setYval(val) {
 		.attr('cy', function(d) {return yScale(d[yVal]); });
 }
 */
+function createPlot(data, xVal, yVal) {
+	
+}
