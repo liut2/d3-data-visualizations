@@ -3,13 +3,14 @@
 //   different values associated with the top 100 words in Shakespeare's First Folio
 // CS 314, Spring 2017
 // Eric Alexander
+// TODO: add label, title, interactivity
 
 // First, we will create some constants to define non-data-related parts of the visualization
 var w = 2000;			// Width of our visualization
 var h = 2000;			// Height of our visualization
 //xOffset = 40;		// Space for x-axis labels
 //yOffset = 100;		// Space for y-axis labels
-//margin = 0;		// Margin around visualization
+margin = 50;		// Margin around visualization
 var vals = ['Rank','Frequency','TFIDF','DocFrequency'];
 //xVal = vals[0];		// Value to plot on x-axis
 //yVal = vals[1];		// Value to plot on y-axis
@@ -82,8 +83,8 @@ function setYval(val) {
 }
 */
 function createPlot(data, i, j) {
-	var xVal = vals[i];
-	var yVal = vals[j];
+	var xVal = vals[j];
+	var yVal = vals[i];
 
 	// This will define scales that convert values
 	// from our data domain into screen coordinates.
@@ -105,7 +106,7 @@ function createPlot(data, i, j) {
 				.ticks(5);
 	xAxisG = svg.append('g')
 				.attr('class', 'axis')
-				.attr('transform', 'translate(' + gridLength * j + ',' + gridLength * (i + 1) + ')')
+				.attr('transform', 'translate(' + (gridLength * j + margin * (j + 1)) + ',' + (gridLength * (i + 1) + margin * i) + ')')
 				.call(xAxis);
 	/*
 	xLabel = svg.append('text')
@@ -116,11 +117,11 @@ function createPlot(data, i, j) {
 
 	yAxis = d3.svg.axis()
 				.scale(yScale)
-				.orient('right')
+				.orient('left')
 				.ticks(5);
 	yAxisG = svg.append('g')
 				.attr('class', 'axis')
-				.attr('transform', 'translate(' + gridLength * j + ',' + gridLength * i + ')')
+				.attr('transform', 'translate(' + (gridLength * j + margin * (j + 1)) + ',' + (gridLength * i + margin * i) + ')')
 				.call(yAxis);
 	/*
 	yLabel = svg.append('text')
@@ -146,8 +147,8 @@ function createPlot(data, i, j) {
 	circles.enter()
 		.append('svg:circle')
 		.attr('class', 'dot' + plotId)
-		.attr('cx', function(d) {return gridLength * j + xScale(d[xVal]); })
-		.attr('cy', function(d) {return gridLength * i + yScale(d[yVal]); })
+		.attr('cx', function(d) {return gridLength * j + margin * (j + 1) + xScale(d[xVal]); })
+		.attr('cy', function(d) {return gridLength * i + margin * i + yScale(d[yVal]); })
 		.attr('r', 3)
 		.style('fill', 'lightgrey')
 		//.append('svg:title')
