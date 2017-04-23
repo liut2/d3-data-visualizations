@@ -1,37 +1,34 @@
-// Part of a brief D3 tutorial.
-// Upon completion, will display an interactive scatterplot showing relationship between
-//   different values associated with the top 100 words in Shakespeare's First Folio
+// Credits: I used Eric's lab's code as the starter template for this assignment.
+// Also, I used one random color generator function found online at http://stackoverflow.com/questions/1484506/random-color-generator-in-javascript
 // CS 314, Spring 2017
-// Eric Alexander
-// TODO: add interactivity and change data
+// author: Tao Liu
+
 
 // First, we will create some constants to define non-data-related parts of the visualization
 var w = 2000;			// Width of our visualization
 var h = 2000;			// Height of our visualization
-//xOffset = 40;		// Space for x-axis labels
-//yOffset = 100;		// Space for y-axis labels
 var margin = 50;		// Margin around visualization
 var vals = ['Rank','Frequency','TFIDF','DocFrequency'];
-//xVal = vals[0];		// Value to plot on x-axis
-//yVal = vals[1];		// Value to plot on y-axis
-var gridLength = 150;
-var svg;
+var gridLength = 150;   // The size of each individual plot
+var svg; // The canvas We draw things on
 
 
 // Next, we will load in our CSV of data
-d3.csv('shakespeare_top100.csv', function(csvData) {
+d3.csv('shakespeare_top30.csv', function(csvData) {
 	var data = csvData;
 	// Next, we will create an SVG element to contain our visualization.
 	svg = d3.select('#pointsSVG').append('svg:svg')
 				.attr('width', w)
 				.attr('height', h);
 
+	// Here I treat the data as n * n matrix to automatically plot all the combinations of x and y values
 	for (var i = 0; i < vals.length; i++) {
 		for (var j = 0; j < vals.length; j++) {
+			// If it's not diagonal, we plot it
 			if (i != j) {
 				createPlot(data, i, j);
 			} else {
-				// Add labels here
+				// Otherwise, add labels here
 				var labels = svg.append('g')
 					.attr('transform', 'translate(' + (gridLength * j + margin * (j + 1) +  gridLength / 4) + ',' + (gridLength * i + margin * i + gridLength / 2) + ')')
 					.append('text')
@@ -44,54 +41,7 @@ d3.csv('shakespeare_top100.csv', function(csvData) {
 
 });
 
-/*
-// A function to retrieve the next value in the vals list
-function getNextVal(val) {
-	return vals[(vals.indexOf(val) + 1) % vals.length];
-}
-
-// A function to change what values we plot on the x-axis
-function setXval(val) {
-	// Update xVal
-	xVal = val;
-
-	// Update the axis
-	xScale.domain([d3.min(data, function(d) { return parseFloat(d[xVal]); })-1,
-				   d3.max(data, function(d) { return parseFloat(d[xVal]); })+1])
-	xAxis.scale(xScale);
-	xAxisG.call(xAxis);
-	xLabel.text(xVal);
-
-	// Update the points
-	// ************************************************
-	// *********** YOUR CODE WILL GO HERE **************
-	// ************************************************
-	circles = svg.selectAll('circle');
-	circles
-		.attr('cx', function(d) {return xScale(d[xVal]); });
-}
-
-// A function to change what values we plot on the y-axis
-function setYval(val) {
-	// Update yVal
-	yVal = val;
-
-	// Update the axis
-	yScale.domain([d3.min(data, function(d) { return parseFloat(d[yVal]); })-1,
-				   d3.max(data, function(d) { return parseFloat(d[yVal]); })+1])
-	yAxis.scale(yScale);
-	yAxisG.call(yAxis);
-	yLabel.text(yVal);
-
-	// Update the points
-	// ************************************************
-	// *********** YOUR CODE WILL GO HERE *************
-	// ************************************************
-	circles = svg.selectAll('circle');
-	circles
-		.attr('cy', function(d) {return yScale(d[yVal]); });
-}
-*/
+// This function contains the real meat of plotting the chart
 function createPlot(data, i, j) {
 	var xVal = vals[j];
 	var yVal = vals[i];
@@ -101,12 +51,10 @@ function createPlot(data, i, j) {
 	xScale = d3.scale.linear()
 				.domain([d3.min(data, function(d) { return parseFloat(d[xVal]); })-1,
 						 d3.max(data, function(d) { return parseFloat(d[xVal]); })+1])
-				//.range([yOffset + margin, w - margin]);
 				.range([0, gridLength]);
 	yScale = d3.scale.linear()
 				.domain([d3.min(data, function(d) { return parseFloat(d[yVal]); })-1,
 						 d3.max(data, function(d) { return parseFloat(d[yVal]); })+1])
-				//.range([h - xOffset - margin, margin]); // Notice this is backwards!
 				.range([gridLength, 0]); // Notice this is backwards!
 
 	// Build axes! (These are kind of annoying, actually...)
@@ -118,12 +66,6 @@ function createPlot(data, i, j) {
 				.attr('class', 'axis')
 				.attr('transform', 'translate(' + (gridLength * j + margin * (j + 1)) + ',' + (gridLength * (i + 1) + margin * i) + ')')
 				.call(xAxis);
-	/*
-	xLabel = svg.append('text')
-				.attr('class','label')
-				.attr('x', gridLength/2)
-				.attr('y', gridLength - 20)
-				.text(xVal);*/
 
 	yAxis = d3.svg.axis()
 				.scale(yScale)
@@ -133,12 +75,6 @@ function createPlot(data, i, j) {
 				.attr('class', 'axis')
 				.attr('transform', 'translate(' + (gridLength * j + margin * (j + 1)) + ',' + (gridLength * i + margin * i) + ')')
 				.call(yAxis);
-	/*
-	yLabel = svg.append('text')
-				.attr('class','label')
-				.attr('x', 0)
-				.attr('y', gridLength/2)
-				.text(yVal);*/
 
 	// Select elements
 	// Bind data to elements
@@ -157,10 +93,52 @@ function createPlot(data, i, j) {
 	circles.enter()
 		.append('svg:circle')
 		.attr('class', 'dot' + plotId)
+		.attr('class', function(d) {return 'item-' + d['Word']})
 		.attr('cx', function(d) {return gridLength * j + margin * (j + 1) + xScale(d[xVal]); })
 		.attr('cy', function(d) {return gridLength * i + margin * i + yScale(d[yVal]); })
 		.attr('r', 3)
 		.style('fill', 'lightgrey')
+		.on('mouseover', function(d) {
+			var className = 'item-' + d3.select(this).select('title').text();
+			var isClicked = d3.select(this).attr('class').includes(className + '-clicked');
+			if (!isClicked) {
+				d3.selectAll('.' + className)
+					.style('fill', 'red');
+			}
+		})
+		.on('mouseout', function(d) {
+			var className = 'item-' + d3.select(this).select('title').text();
+			var isClicked = d3.select(this).attr('class').includes(className + '-clicked');
+			if (!isClicked) {
+				d3.selectAll('.' + className)
+					.style('fill', 'lightgrey');
+			}
+		})
+		.on('click', function(d) {
+			var className = 'item-' + d3.select(this).select('title').text();
+			var isClicked = d3.select(this).attr('class').includes(className + '-clicked');
+			console.log(isClicked);
+			if (isClicked) {
+				d3.selectAll('.' + className)
+					.style('fill', 'lightgrey')
+					.classed('.' + className + '-clicked', false);
+			} else {
+				d3.selectAll('.' + className)
+					.style('fill', getRandomColor())
+					.classed('.' + className + '-clicked', true);
+			}
+
+		})
 		.append('svg:title')
 		.text(function(d) {return d['Word']; });
+}
+
+// This function generates random color
+function getRandomColor() {
+    var letters = '0123456789ABCDEF';
+    var color = '#';
+    for (var i = 0; i < 6; i++ ) {
+        color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
 }
