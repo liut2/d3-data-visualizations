@@ -20,12 +20,13 @@ var drawPoints = function(data) {
           .attr('width', svgHeight);
 
     // Bind data
-    var circles = pointPlot.selectAll('circle')
+    var circles = pointPlot.selectAll('.dot' + 10)
       .data(data);
 
     // Enter
     circles.enter()
       .append('svg:circle')
+      .attr('class', 'dot' + 10)
       .attr('cx', function(d) {return d['x']; })
       .attr('cy', function(d) {return d['y']; })
       .attr('r', 0)
@@ -48,7 +49,7 @@ var drawPoints = function(data) {
       .transition()
       .duration(750)
       .attr('r', function(d) {return d['r']; });
-      
+
 };
 
 // This function will run once the rest of the page is finished loading.
