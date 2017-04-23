@@ -41,7 +41,7 @@ d3.csv('shakespeare_top30.csv', function(csvData) {
 
 });
 
-// This function contains the real meat of plotting the chart
+// This function contains the real meat of plotting the data
 function createPlot(data, i, j) {
 	var xVal = vals[j];
 	var yVal = vals[i];
@@ -101,6 +101,7 @@ function createPlot(data, i, j) {
 		.on('mouseover', function(d) {
 			var className = 'item-' + d3.select(this).select('title').text();
 			var isClicked = d3.select(this).attr('class').includes(className + '-clicked');
+
 			if (!isClicked) {
 				d3.selectAll('.' + className)
 					.style('fill', 'red');
@@ -109,6 +110,7 @@ function createPlot(data, i, j) {
 		.on('mouseout', function(d) {
 			var className = 'item-' + d3.select(this).select('title').text();
 			var isClicked = d3.select(this).attr('class').includes(className + '-clicked');
+
 			if (!isClicked) {
 				d3.selectAll('.' + className)
 					.style('fill', 'lightgrey');
@@ -117,7 +119,7 @@ function createPlot(data, i, j) {
 		.on('click', function(d) {
 			var className = 'item-' + d3.select(this).select('title').text();
 			var isClicked = d3.select(this).attr('class').includes(className + '-clicked');
-			console.log(isClicked);
+
 			if (isClicked) {
 				d3.selectAll('.' + className)
 					.style('fill', 'lightgrey')
