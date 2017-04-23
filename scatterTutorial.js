@@ -3,18 +3,18 @@
 //   different values associated with the top 100 words in Shakespeare's First Folio
 // CS 314, Spring 2017
 // Eric Alexander
-// TODO: add label, title, interactivity
+// TODO: add diagonal labels, title, interactivity and change data
 
 // First, we will create some constants to define non-data-related parts of the visualization
 var w = 2000;			// Width of our visualization
 var h = 2000;			// Height of our visualization
 //xOffset = 40;		// Space for x-axis labels
 //yOffset = 100;		// Space for y-axis labels
-margin = 50;		// Margin around visualization
+var margin = 50;		// Margin around visualization
 var vals = ['Rank','Frequency','TFIDF','DocFrequency'];
 //xVal = vals[0];		// Value to plot on x-axis
 //yVal = vals[1];		// Value to plot on y-axis
-var gridLength = 200;
+var gridLength = 150;
 var svg;
 
 
@@ -28,7 +28,16 @@ d3.csv('shakespeare_top100.csv', function(csvData) {
 
 	for (var i = 0; i < vals.length; i++) {
 		for (var j = 0; j < vals.length; j++) {
-			createPlot(data, i, j);
+			if (i != j) {
+				createPlot(data, i, j);
+			} else {
+				// Add labels here
+				var labels = svg.append('g')
+					.attr('transform', 'translate(' + (gridLength * j + margin * (j + 1) +  gridLength / 4) + ',' + (gridLength * i + margin * i + gridLength / 2) + ')')
+					.append('text')
+					.text(vals[i])
+					.style('font-size', '15px');
+			}
 		}
 	}
 
