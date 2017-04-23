@@ -47,11 +47,11 @@ d3.csv('shakespeare_top100.csv', function(csvData) {
 				.attr('class','label')
 				.attr('x', w/2)
 				.attr('y', h - 5)
-				.text(xVal)
-	            // Uncomment the following event handler to change xVal by clicking label (and remove above semi-colon)
-				.on('click', function() {
-					setXval(getNextVal(xVal));
-				});
+				.text(xVal);
+	      // Uncomment the following event handler to change xVal by clicking label (and remove above semi-colon)
+				//.on('click', function() {
+				//	setXval(getNextVal(xVal));
+				//});
 	yAxis = d3.svg.axis()
 				.scale(yScale)
 				.orient('left')
@@ -64,11 +64,11 @@ d3.csv('shakespeare_top100.csv', function(csvData) {
 				.attr('class','label')
 				.attr('x', yOffset/2)
 				.attr('y', h/2-10)
-				.text(yVal)
+				.text(yVal);
 				// Uncomment the following event handler to change yVal by clicking label (and remove above semi-colon)
-				.on('click', function() {
-					setYval(getNextVal(yVal));
-				});
+				//.on('click', function() {
+				//	setYval(getNextVal(yVal));
+				//});
 
 	// Now, we will start actually building our scatterplot!
 	// *****************************************************
@@ -97,6 +97,7 @@ d3.csv('shakespeare_top100.csv', function(csvData) {
 			// tooltip?
 });
 
+/*
 // A function to retrieve the next value in the vals list
 function getNextVal(val) {
 	return vals[(vals.indexOf(val) + 1) % vals.length];
@@ -143,3 +144,4 @@ function setYval(val) {
 	circles
 		.attr('cy', function(d) {return yScale(d[yVal]); });
 }
+*/
