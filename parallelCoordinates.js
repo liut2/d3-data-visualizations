@@ -8,10 +8,10 @@
 // First, we will create some constants to define non-data-related parts of the visualization
 var w = 2000;			// Width of our visualization
 var h = 2000;			// Height of our visualization
-var margin = 200;		// Margin around visualization
-var marginTop = 20;
+var margin = 200;		// Margin between each y-axis
+var marginTop = 20; // Margin to the top of svg
 var vals = ['Rank','Frequency','TFIDF','DocFrequency'];
-var axisLength = 400;
+var axisLength = 400; // Length of each y-axis
 var svg; // The canvas We draw things on
 
 
@@ -28,18 +28,7 @@ d3.csv('shakespeare_top30.csv', function(csvData) {
     createPlot(data, i);
   }
 
-  // Connect points of the same item
-  /*
-  for (var i = 0; i < data.length; i++) {
-    var word = data[i]['Word'];
-    var className = 'item-' + word;
-    if (i == 0) {
-      var circles = svg.selectAll('.' + className)[0];
-      for (var j = 0; j < circles.length; j++) {
-
-      }
-    }
-  }*/
+  // Plot lines
   var lineData;
   for (var i = 0; i < data.length; i++) {
     lineData = [];
@@ -64,15 +53,47 @@ d3.csv('shakespeare_top30.csv', function(csvData) {
     //The line SVG Path we draw
     var lineGraph = svg.append("path")
       .attr("d", lineFunction(lineData))
+      .attr('class', 'line')
       .attr("stroke", "lightgrey")
       .attr("stroke-width", 2)
-      .attr("fill", "none");
+      .attr("fill", "none")
+      .on('mouseover', function(d) {
+        var isClicked = d3.select(this).attr('class').includes('line-clicked');
 
+  			if (!isClicked) {
+  				d3.select(this)
+  					.style('stroke', 'red');
+  			}
+  		})
+  		.on('mouseout', function(d) {
+        var isClicked = d3.select(this).attr('class').includes('line-clicked');
+
+  			if (!isClicked) {
+  				d3.select(this)
+  					.style('stroke', 'lightgrey');
+  			}
+  		})
+  		.on('click', function(d) {
+  			var isClicked = d3.select(this).attr('class').includes('line-clicked');
+
+  			if (isClicked) {
+  				d3.select(this)
+  					.style('stroke', 'lightgrey')
+  					.classed('line-clicked', false);
+  			} else {
+          console.log('im here again');
+  				d3.select(this)
+  					.style('stroke', getRandomColor())
+  					.classed('line-clicked', true);
+  			}
+  		})
+      .append('svg:title')
+  		.text(data[i]['Word']);
   }
 
 });
 
-// This function contains the real meat of plotting the data
+// This function contains the real meat of plotting the y-axis and points
 function createPlot(data, i) {
 	var yVal = vals[i];
 
@@ -119,44 +140,9 @@ function createPlot(data, i) {
 		.attr('cx', function(d) {return margin * (i + 1); })
 		.attr('cy', function(d) {return marginTop + yScale(d[yVal]); })
 		.attr('r', 3)
-		.style('fill', 'lightgrey');
-    /*
-		.on('mouseover', function(d) {
-			var className = 'item-' + d3.select(this).select('title').text();
-			var isClicked = d3.select(this).attr('class').includes(className + '-clicked');
-
-			if (!isClicked) {
-				d3.selectAll('.' + className)
-					.style('fill', 'red');
-			}
-		})
-		.on('mouseout', function(d) {
-			var className = 'item-' + d3.select(this).select('title').text();
-			var isClicked = d3.select(this).attr('class').includes(className + '-clicked');
-
-			if (!isClicked) {
-				d3.selectAll('.' + className)
-					.style('fill', 'lightgrey');
-			}
-		})
-		.on('click', function(d) {
-			var className = 'item-' + d3.select(this).select('title').text();
-			var isClicked = d3.select(this).attr('class').includes(className + '-clicked');
-
-			if (isClicked) {
-				d3.selectAll('.' + className)
-					.style('fill', 'lightgrey')
-					.classed('.' + className + '-clicked', false);
-			} else {
-				d3.selectAll('.' + className)
-					.style('fill', getRandomColor())
-					.classed('.' + className + '-clicked', true);
-			}
-
-		})
+		.style('fill', 'lightgrey')
 		.append('svg:title')
 		.text(function(d) {return d['Word']; });
-    */
 }
 
 // This function generates random color
